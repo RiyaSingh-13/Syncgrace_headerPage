@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SyncGaze</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(ellipse at center, #0B0F1A 0%, #050813 100%);
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background Particles */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(59, 130, 246, 0.5);
+      border-radius: 50%;
+      animation: float infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(20px);
+        opacity: 0;
+      }
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5%;
+      background-color: rgba(15, 17, 35, 0.8);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    nav.scrolled {
+      padding: 15px 5%;
+      background-color: rgba(15, 17, 35, 0.95);
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-img {
+      height: 40px;
+      width: auto;
+      transition: transform 0.3s ease;
+    }
+
+    nav:hover .logo-img {
+      transform: rotate(15deg);
+    }
+
+    nav .logo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #8b5cf6 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+
+    nav .menu {
+      display: flex;
+      gap: 15px;
+    }
+
+    nav .menu a {
+      position: relative;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      font-size: 0.9rem;
+    }
+
+    nav .menu a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(99, 102, 241, 0.2));
+      border-radius: 50px;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+      z-index: -1;
+    }
+
+    nav .menu a:hover {
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    nav .menu a:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 200px 5% 150px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-logo {
+      height: 100px;
+      margin-bottom: 30px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease forwards 0.1s;
+      filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.5));
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #8b5cf6 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+      letter-spacing: 2px;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease forwards 0.3s;
+    }
+
+    .hero h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease forwards 0.6s;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease forwards 0.9s;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease forwards 1.2s;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-block;
+      padding: 15px 35px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      overflow: hidden;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px -5px rgba(14, 165, 233, 0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #0ea5e9;
+      color: #0ea5e9;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      background: rgba(14, 165, 233, 0.1);
+    }
+
+    /* Animated Circles */
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.2), transparent 70%);
+      z-index: 1;
+      animation: pulse 8s infinite alternate;
+    }
+
+    .circle-1 {
+      width: 500px;
+      height: 500px;
+      top: -150px;
+      left: -150px;
+      animation-delay: 0s;
+    }
+
+    .circle-2 {
+      width: 300px;
+      height: 300px;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: 1s;
+    }
+
+    .circle-3 {
+      width: 200px;
+      height: 200px;
+      top: 30%;
+      right: 20%;
+      animation-delay: 2s;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(1.2);
+        opacity: 0.2;
+      }
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Floating Animation */
+    .floating {
+      animation: floating 6s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 3rem;
+      }
+      
+      .hero h2 {
+        font-size: 1.2rem;
+      }
+      
+      nav .menu {
+        display: none;
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .hero-logo {
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background Particles -->
+  <div class="particles" id="particles"></div>
+  
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="logo-container">
+      <img src="Screenshot 2025-07-03 154920.png" alt="SyncGaze Logo" class="logo-img">
+      <div class="logo-text">SyncGaze</div>
+    </div>
+    <div class="menu">
+      <a href="#features">Features</a>
+      <a href="#download">Download</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+  
+
+</body>
+</html>
